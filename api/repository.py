@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 SQL_BASE = declarative_base()
 
-
 @cache
 def get_engine(db_string: str):
     return create_engine(db_string, pool_pre_ping=True)
@@ -23,6 +22,9 @@ class TodoInDB(SQL_BASE):  # type: ignore
     value = Column(String(length=128), nullable=False)
     done = Column(Boolean, default=False)
 
+class Neighbour(BaseModel):
+    repo: str
+    stargazers: list[str]
 
 class Todo(BaseModel):
     key: str
