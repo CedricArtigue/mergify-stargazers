@@ -72,14 +72,14 @@ We'll comment later in this document how we can alleviate those limitations (db,
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-The only requirements to develop are Docker and Make.
+The only requirements to develop are a running Docker engine and Make.
 
 To start up the project locally you first clone the project, and then run the following command in the cloned directory:
 
 ```shell
-$ git clone https://github.com/CedricArtigue/mergify-stargazers.git
-$ cd mergify-stargazers
-$ make up
+git clone https://github.com/CedricArtigue/mergify-stargazers.git
+cd mergify-stargazers
+make up
 ```
 
 ## 🎈 Usage <a name="usage"></a>
@@ -87,6 +87,11 @@ $ make up
 The integrated swagger gui allows to easily test the authenticated API endpoints.
 
 After running previous step, app should be running at [localhost:5000](http://localhost:5000).
+
+Authenticate with dummy user (no database for now):
+- login: johndoe
+- password: secret 
+
 
 ## 🚀 Future Scope <a name = "future_scope"></a>
 
