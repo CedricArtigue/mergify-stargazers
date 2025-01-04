@@ -1,93 +1,93 @@
-# Fastapi Project Template
+<p align="center">
+  <a href="" rel="noopener">
+ <img src="./logo.png" alt="Project logo"></a>
+</p>
+<h3 align="center">Mergify Stargazers Case</h3>
 
+## 📝 Table of Contents
 
-A FastAPI project template using Make, Docker Compose and Github Actions,
-that includes **SQLAlchemy**, **Alembic** and an integration test setup.
+- [📝 Table of Contents](#-table-of-contents)
+- [🧐 Problem Statement ](#-problem-statement-)
+- [💡 Idea / Solution ](#-idea--solution-)
+- [⛓️ Dependencies / Limitations ](#️-dependencies--limitations-)
+- [🏁 Getting Started ](#-getting-started-)
+- [🎈 Usage ](#-usage-)
+- [🚀 Future Scope ](#-future-scope-)
 
-[![Code Integration](https://github.com/bitestreams/fastapi-template/actions/workflows/code-integration.yml/badge.svg)](https://github.com/bitestreams/fastapi-template/actions/workflows/code-integration.yml)
+## 🧐 Problem Statement <a name = "problem_statement"></a>
 
-##  Installation
+The goal of this project is to have a web service that can receive such a request:
+```
+GET /repos/<user>/<repo>/starneighbours
+```
+This endpoint must return the list of neighbours github repositories, meaning repositories where at least one stargazer is found in common.
+The returned JSON format should look like:
+```json
+[
+ {
+   "repo": <repoA>,
+    "stargazers": [<stargazers in common>, ...],
+ },
+ ...
+]
+```
 
-The only requirements to develop are **Docker** and **Make**.
-Docker makes it easy to get started and enables easier switching between projects, operating systems and machines.
+## 💡 Idea / Solution <a name = "idea"></a>
+
+Tools we'll be using:
+- FastAPI framework to develop the API
+- pandas library for fast data analysis and manipulation
+- docker to run the api
+- docker-compose to easily setup the required stack
+- a FastAPI template repository
+
+Github API provides endpoints to
+- fetch stargazers of a specific (owner/repo) tuple 
+- fetch starred repositories of a specific stargazer
+
+We'll setup the required API endpoint to which tied up business logic will be in charge of:
+- authenticating incoming client calls using FastAPI OAuth2PasswordBearer method
+- fetching stargazers of a specific repo
+- fetch starred repo of each previous stargazers
+- build a pandas dataframe holding those data
+- run some pandas data preparation on top of it \(filtering, grouping and formatting result)
+- send formatted data to the client
+
+We'll add authentication using FastAPI go to method: OAuth2PasswordBearer
+
+## ⛓️ Dependencies / Limitations <a name = "limitations"></a>
+Depending on the target repository the number of stargazers can be huge. 
+
+At first look (I may be wrong), it seems that we cannot read starred repositories for a list of users in the same Github API call, which means that we must call Github API as many time as there is stargazers on the target repository (and this stands true ONLY if we have a single stargazers or starred repositories page for each endpoint, which won't hold for long)
+
+On the other hand, Github API is rate limited as follow:
+- 60 api hits per hour for non authenticated users
+- 5000 api hits per hour for authenticated users
+
+For the sake of simplicity and dev rapidity, during the first naive approach we'll limit ourselves to a maximum of less than 60 api calls for building the required result, which translates to:
+- a single stargazers page for a target repo will be fetched
+- only a single page of starred repository will be fecthed only for a few stargazers.
+
+We'll comment later in this document how we can alleviate those limitations (db, queue, checkpoint restart, etc)
+
+## 🏁 Getting Started <a name = "getting_started"></a>
+
+The only requirements to develop are Docker and Make.
 
 To start up the project locally you first clone the project, and then run the following command in the cloned directory:
-```sh
-$ git clone https://github.com/Donnype/fastapi-template.git
-$ cd fastapi-template
+
+```shell
+$ git clone https://github.com/CedricArtigue/mergify-stargazers.git
+$ cd mergify-stargazers
 $ make up
 ```
-Then to update the schema using alembic, in another shell:
-```sh
-$ make migrate
-```
-**That's it**. The app is set up and should be running at [localhost:5000/docs](localhost:5000/docs).
-Code changes are automatically detected using a mounted docker volume.
 
+## 🎈 Usage <a name="usage"></a>
 
-### Makefile
+Te integrated swagger gui allows to easily test the authenticated API endpoints.
 
----
-The Makefile is the 'entrypoint' for the tools in this structure,
-such that you can easily run different commands without remembering the exact arguments.
-Run `make help` to get an overview of the available commands:
-```sh
-$ make help
-up:
- Run the application
-done: check test
- Prepare for a commit
-test: utest itest
- Run unit and integration tests
-utest: cleantest
- Run unit tests
-itest: cleantest
- Run integration tests
-check: cleantest
- Check the code base
-cleantest:
- Clean up test containers
-migrations:
- Generate a migration using alembic
-migrate:
- Run migrations upgrade using alembic
-downgrade:
- Run migrations downgrade using alembic
-help:
- Display this help message
-```
+After running previous step, app should be running at [localhost:5000](localhost:5000).
 
-Make allows you to collect common scripts and commands for the project.
-Other projects using different programming languages and frameworks get the same development interface by using Make.
+## 🚀 Future Scope <a name = "future_scope"></a>
 
----
-
-### Installation without Docker
-To install a local copy of the python environment (to get code-completion for example),
-you must have **Poetry** installed.
-Create a poetry environment by running `poetry install` at the root of the project.
-To start up the server in the poetry environment and talk to a test sqlite database in `./test.db`, run
-```bash
-$ export DB_STRING=sqlite:///test.db/
-$ poetry run alembic upgrade head && poetry run uvicorn api.main:app --port 5000 --reload
-```
-Again, the app should be all set up and running at [localhost:5000/docs](localhost:5000/docs).
-
-### Tests
-
----
-
-The tests are containerized and the Docker setup can be found in the `.ci/` folder.
-They are written using Pytest.
-You can run the tests using:
-```bash
-$ make test
-```
-This runs the integration & unit tests.
-If you want to run them separately, use `make itest` to run the integration tests and `make utest` to run the unit tests.
-
-
-## Further reading
-
-To read about the benefits of using this template,
-check out [my blog post](https://bitestreams.com/blog/fastapi_template/).
+TODO
