@@ -84,9 +84,9 @@ $ make up
 
 ## 🎈 Usage <a name="usage"></a>
 
-Te integrated swagger gui allows to easily test the authenticated API endpoints.
+The integrated swagger gui allows to easily test the authenticated API endpoints.
 
-After running previous step, app should be running at [localhost:5000](localhost:5000).
+After running previous step, app should be running at [localhost:5000](http://localhost:5000).
 
 ## 🚀 Future Scope <a name = "future_scope"></a>
 
