@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 
 from api.repositories.user import UserInDB, fake_users_db
 
-router = APIRouter()
+router = APIRouter(tags=["login"])
 
 def fake_hash_password(password: str):
     return "fakehashed" + password

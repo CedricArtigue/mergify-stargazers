@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 @router.get("/{owner}/{name}/starneighbours", response_model=list[Neighbour] | None)
-def repos(owner: str, name: str):
+def get_neighbour_repositories(owner: str, name: str):
     # get target repo stargazers
     stargazers = requests.get(f'https://api.github.com/repos/{owner}/{name}/stargazers').json()
     df_stargazers = pd.DataFrame(stargazers).head(1) # TODO: remove limitation here
