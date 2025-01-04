@@ -2,13 +2,13 @@ import os
 import time
 
 import alembic.config
-import pytest
+import pytest # type: ignore
 from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
 from api.main import app
-from api.repository import (
+from api.repositories.todo import (
     SQL_BASE,
     InMemoryTodoRepository,
     SQLTodoRepository,

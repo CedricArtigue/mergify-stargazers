@@ -22,10 +22,6 @@ class TodoInDB(SQL_BASE):  # type: ignore
     value = Column(String(length=128), nullable=False)
     done = Column(Boolean, default=False)
 
-class Neighbour(BaseModel):
-    repo: str
-    stargazers: list[str]
-
 class Todo(BaseModel):
     key: str
     value: str
