@@ -4,8 +4,18 @@
 </p>
 <h3 align="center">Mergify Stargazers Case</h3>
 
+## 💡 TODO <a name = "todo"></a>
+- directories for app/infra/domain layers
+- infra layer github service (decoupling data fetching from processing in usecase)
+- setup unit test on usecases, injecting mockedup services and repositories
+- setup ci to run unit tests
+- setup ci to run integration tests (it will be a little bit longer)
+- include a database ?
+- setup github flow in CI ?
+
 ## 📝 Table of Contents
 
+- [💡 TODO ](#-todo-)
 - [📝 Table of Contents](#-table-of-contents)
 - [🧐 Problem Statement ](#-problem-statement-)
 - [💡 Idea / Solution ](#-idea--solution-)
@@ -52,8 +62,6 @@ We'll setup the required API endpoint to which tied up business logic will be in
 - build a pandas dataframe holding those data
 - run some pandas data preparation on top of it \(filtering, grouping and formatting result)
 - send formatted data to the client
-
-We'll add authentication using FastAPI go to method: OAuth2PasswordBearer
 
 ## ⛓️ Dependencies / Limitations <a name = "limitations"></a>
 Depending on the target repository the number of stargazers can be huge. 
