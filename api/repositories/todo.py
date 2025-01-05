@@ -1,18 +1,18 @@
 import os
 from collections.abc import Iterator
 from functools import cache
-
-from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, Integer, String, create_engine
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+from api.domain.models import Todo, TodoFilter
+from api.domain.repositories import TodoRepository
 
 SQL_BASE = declarative_base()
 
 @cache
 def get_engine(db_string: str):
     return create_engine(db_string, pool_pre_ping=True)
-
 
 class TodoInDB(SQL_BASE):  # type: ignore
     __tablename__ = "todo"
@@ -22,37 +22,7 @@ class TodoInDB(SQL_BASE):  # type: ignore
     value = Column(String(length=128), nullable=False)
     done = Column(Boolean, default=False)
 
-class Todo(BaseModel):
-    key: str
-    value: str
-    done: bool = False
-
-
-class TodoFilter(BaseModel):
-    limit: int | None = None
-    key_contains: str | None = None
-    value_contains: str | None = None
-    done: bool | None = None
-
-
-class TodoRepository:  # Interface
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type: type[Exception], exc_value: str, exc_traceback: str):
-        pass
-
-    def save(self, todo: Todo) -> None:
-        raise NotImplementedError()
-
-    def get_by_key(self, key: str) -> Todo | None:
-        raise NotImplementedError()
-
-    def get(self, todo_filter: TodoFilter) -> list[Todo]:
-        raise NotImplementedError()
-
-
-class InMemoryTodoRepository:  # In-memory implementation of interface
+class InMemoryTodoRepository(TodoRepository):  # In-memory implementation of interface
     def __init__(self):
         self.data = {}
 
@@ -115,7 +85,6 @@ class SQLTodoRepository(TodoRepository):  # SQL Implementation of interface
             query = query.limit(todo_filter.limit)
 
         return [Todo(key=todo.key, value=todo.value, done=todo.done) for todo in query]
-
 
 def create_todo_repository() -> Iterator[TodoRepository]:
     session = sessionmaker(bind=get_engine(os.getenv("DB_STRING")))()

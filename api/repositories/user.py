@@ -1,15 +1,8 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
-from pydantic import BaseModel
 
-from ..dependencies.auth import oauth2_scheme
-
-class User(BaseModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
-
+from api.domain.models import User
+from api.dependencies.auth import oauth2_scheme
 
 class UserInDB(User):
     hashed_password: str
