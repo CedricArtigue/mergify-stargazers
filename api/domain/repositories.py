@@ -1,5 +1,5 @@
 # This file holds Domain Models Repository Interfaces 
-from api.domain.models import Todo, TodoFilter
+from api.domain.entities import Todo, TodoFilter
 
 class TodoRepository:
     def __enter__(self):

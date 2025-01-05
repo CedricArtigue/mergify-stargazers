@@ -1,6 +1,5 @@
 import os
 import time
-
 import alembic.config
 import pytest # type: ignore
 from sqlalchemy.exc import DataError, IntegrityError
@@ -8,16 +7,10 @@ from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
 from api.main import app
-from api.repositories.todo import (
-    SQL_BASE,
-    InMemoryTodoRepository,
-    SQLTodoRepository,
-    Todo,
-    TodoFilter,
-    TodoRepository,
-    get_engine,
-)
-
+from api.domain.entities import Todo, TodoFilter
+from api.domain.repositories import TodoRepository
+from api.infrastructure.database.client import SQL_BASE, get_engine
+from api.interface_adapters.gateways.todo import InMemoryTodoRepository, SQLTodoRepository
 
 @pytest.fixture
 def fake_todo_repository():

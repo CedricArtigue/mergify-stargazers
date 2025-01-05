@@ -1,5 +1,5 @@
 from api.domain.errors import InvalidUserNameOrPassword
-from api.repositories.user import UserInDB, fake_users_db
+from api.interface_adapters.gateways.user import UserInDB, fake_users_db
 
 def fake_hash_password(password: str):
     return "fakehashed" + password

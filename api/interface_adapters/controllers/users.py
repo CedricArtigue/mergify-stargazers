@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends, APIRouter
 
-from api.repositories.user import User, get_current_active_user
+from api.interface_adapters.gateways.user import User, get_current_active_user
 
 router = APIRouter(tags=["users"])
 

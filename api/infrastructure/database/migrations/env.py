@@ -3,10 +3,10 @@ from logging.config import fileConfig
 
 from alembic import context
 
+from api.infrastructure.database.client import SQL_BASE, get_engine
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-from api.repositories.todo import SQL_BASE, get_engine
-
 config = context.config
 
 # Interpret the config file for Python logging.

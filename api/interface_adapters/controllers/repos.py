@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from api.domain.models import Neighbour
-from api.repositories.user import get_current_active_user
+from api.domain.entities import Neighbour
+from api.interface_adapters.gateways.user import get_current_active_user
 from api.usecases.get_starneighbours import get_starneighbours as get_starneighbours_usecase
 
 router = APIRouter(

@@ -1,18 +1,12 @@
 import os
 from collections.abc import Iterator
-from functools import cache
-from sqlalchemy import Boolean, Column, Integer, String, create_engine
+from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.exc import DatabaseError
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
-from api.domain.models import Todo, TodoFilter
+from api.domain.entities import Todo, TodoFilter
 from api.domain.repositories import TodoRepository
-
-SQL_BASE = declarative_base()
-
-@cache
-def get_engine(db_string: str):
-    return create_engine(db_string, pool_pre_ping=True)
+from api.infrastructure.database.client import get_engine
 
 class TodoInDB(SQL_BASE):  # type: ignore
     __tablename__ = "todo"

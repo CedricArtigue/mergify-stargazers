@@ -1,7 +1,7 @@
 import pandas as pd
 import requests
 
-from api.domain.models import Neighbour
+from api.domain.entities import Neighbour
 
 # TODO: handle business domain errors, create a dedicated injected github service
 # Core business logic of building starneighbour of a given repository

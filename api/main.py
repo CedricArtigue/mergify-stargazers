@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.responses import RedirectResponse
 
-from api.routers import login, repos, users
+from api.interface_adapters.controllers import login, repos, users
 
 app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 app.include_router(login.router)

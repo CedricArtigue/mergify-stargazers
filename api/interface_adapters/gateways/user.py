@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 
-from api.domain.models import User
-from api.dependencies.auth import oauth2_scheme
+from api.domain.entities import User
+from api.interface_adapters.shared.auth import oauth2_scheme
 
 class UserInDB(User):
     hashed_password: str
