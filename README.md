@@ -5,8 +5,6 @@
 <h3 align="center">Mergify Stargazers Case</h3>
 
 ## 💡 TODO <a name = "todo"></a>
-- directories for app/infra/domain layers
-- infra layer github service (decoupling data fetching from processing in usecase)
 - setup unit test on usecases, injecting mockedup services and repositories
 - setup ci to run unit tests
 - setup ci to run integration tests (it will be a little bit longer)
