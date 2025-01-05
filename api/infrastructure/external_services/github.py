@@ -1,9 +1,33 @@
 import requests
 
-# get list of stargazers for a given owner/repo tuple
+from api.domain.errors import (
+  GithubRepositoryNotFound, 
+  GithubUserNotFound, 
+  GithubRateLimitExceeded, 
+  UnknownError
+)
+
 def get_repo_stargazers(owner: str, repo: str):
-    return requests.get(f'https://api.github.com/repos/{owner}/{repo}/stargazers').json()
+  try:
+    res = requests.get(f'https://api.github.com/repos/{owner}/{repo}/stargazers')
+  except: 
+    raise UnknownError
+  if (res.status_code == 200):
+    return res.json()  
+  if (res.status_code == 404):
+    raise GithubRepositoryNotFound
+  if ((res.status_code == 403) or (res.status_code == 429)) and (res.headers['x-ratelimit-remaining'] == 0):
+    raise GithubRateLimitExceeded
 
 # get list of starred repo for a given user
 def get_starred_repos(user: str):
-    return requests.get(f'https://api.github.com/users/{user}/starred').json()
+  try:
+    res = requests.get(f'https://api.github.com/users/{user}/starred')
+  except:
+    raise UnknownError
+  if (res.status_code == 200):
+    return res.json()
+  if res.response.status_code == 404:
+    raise GithubUserNotFound        
+  if ((res.status_code == 403) or (res.status_code == 429)) and (res.headers['x-ratelimit-remaining'] == 0):
+    raise GithubRateLimitExceeded
