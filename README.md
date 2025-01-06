@@ -4,22 +4,15 @@
 </p>
 <h3 align="center">Mergify Stargazers Case</h3>
 
-## 💡 TODO <a name = "todo"></a>
-- setup unit test on usecases, injecting mockedup services and repositories
-- setup ci to run unit tests
-- setup ci to run integration tests (it will be a little bit longer)
-- include a database ?
-- setup github flow in CI ?
-
 ## 📝 Table of Contents
 
-- [💡 TODO ](#-todo-)
 - [📝 Table of Contents](#-table-of-contents)
 - [🧐 Problem Statement ](#-problem-statement-)
-- [💡 Idea / Solution ](#-idea--solution-)
-- [⛓️ Dependencies / Limitations ](#️-dependencies--limitations-)
+- [💡 Analyze ](#-analyze-)
+- [⛓️ Limitations ](#️-limitations-)
 - [🏁 Getting Started ](#-getting-started-)
 - [🎈 Usage ](#-usage-)
+- [🏁 Tests ](#-tests-)
 - [🚀 Future Scope ](#-future-scope-)
 
 ## 🧐 Problem Statement <a name = "problem_statement"></a>
@@ -40,7 +33,7 @@ The returned JSON format should look like:
 ]
 ```
 
-## 💡 Idea / Solution <a name = "idea"></a>
+## 💡 Analyze <a name = "idea"></a>
 
 Tools we'll be using:
 - FastAPI framework to develop the API
@@ -61,7 +54,7 @@ We'll setup the required API endpoint to which tied up business logic will be in
 - run some pandas data preparation on top of it \(filtering, grouping and formatting result)
 - send formatted data to the client
 
-## ⛓️ Dependencies / Limitations <a name = "limitations"></a>
+## ⛓️ Limitations <a name = "limitations"></a>
 Depending on the target repository the number of stargazers can be huge. 
 
 At first look (I may be wrong), it seems that we cannot read starred repositories for a list of users in the same Github API call, which means that we must call Github API as many time as there is stargazers on the target repository (and this stands true ONLY if we have a single stargazers or starred repositories page for each endpoint, which won't hold for long)
@@ -98,6 +91,16 @@ Authenticate with dummy user (no database for now):
 - login: johndoe
 - password: secret 
 
+
+## 🏁 Tests <a name = "tests"></a>
+
+The tests are containerized and the Docker setup can be found in the .ci/ folder. They are written using Pytest. You can run the tests using:
+
+```shell
+make test
+```
+
+This runs the integration & unit tests. If you want to run them separately, use make itest to run the integration tests and make utest to run the unit tests.
 
 ## 🚀 Future Scope <a name = "future_scope"></a>
 
