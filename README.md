@@ -8,7 +8,8 @@
 
 - [📝 Table of Contents](#-table-of-contents)
 - [🧐 Problem ](#-problem-)
-  - [⛓️ limitations](#️-limitations)
+  - [statement](#statement)
+  - [limitations](#limitations)
 - [💡 First Solution and Future Scope](#-first-solution-and-future-scope)
   - [Architecture](#architecture)
   - [Stack and Services](#stack-and-services)
@@ -22,7 +23,7 @@
 - [🚀 Future Scope ](#-future-scope-)
 
 ## 🧐 Problem <a name = "problem_statement"></a>
-
+### statement
 The goal of this project is to have a web service that can receive such a request:
 ```
 GET /repos/<user>/<repo>/starneighbours
@@ -39,7 +40,7 @@ The returned JSON format should look like:
 ]
 ```
 
-### ⛓️ limitations
+### limitations
 Depending on the target repository the number of stargazers can be huge. 
 
 At first look (I may be wrong), it seems that we cannot read starred repositories for a list of users in the same Github API call, which means that we must call Github API as many time as there is stargazers on the target repository (and this stands true ONLY if we have a single stargazers or starred repositories page for each endpoint, which won't hold for long)
@@ -50,7 +51,7 @@ On the other hand, Github API is rate limited as follow:
 
 For the sake of simplicity and dev rapidity, during the first naive approach we'll limit ourselves to a maximum of less than 60 api calls for building the required result, which translates to:
 - a single stargazers page for a target repo will be fetched
-- only a single page of starred repository will be fecthed only for a few stargazers.
+- only a single page of starred repository will be fetched only for a few stargazers.
 
 ## 💡 First Solution and Future Scope<a name = "solution"></a>
 ### Architecture
@@ -83,19 +84,19 @@ What we'll be using:
 
 ### Scalability
 #### Data structure
-Pandas is highly memory efficient but as stated above, stargazers of repo can be a huge number and github API rate limitation can hit hard. For the sake of simplicity we are capping for now the number of API hits to demonstrate the feasability and setup the complete app. 
+Pandas is highly memory efficient but as stated above, stargazers of repo can be a huge number and github API rate limitation can hit hard. For the sake of simplicity we are capping for now the number of API hits to demonstrate the feasibility and setup the complete app. 
 
 #### Rate limitation
 In real life, we must improve quite a lot the current implemented approach. We could:
 - batch and queue stargazers' starred repo fetching and processing to prevent app to reach rate limit issue. We could have an advanced database data structure to allow asynchronous update of a specific repo starneighbours
-- use multiple authentucated github account and a flee of agent in charge of running computations in parralel, with a master process in charge of reducing the global result
-- decouple data ingestion from github API, and target data format resitution
+- use multiple authenticated github account and a flee of agent in charge of running computations in parallel, with a master process in charge of reducing the global result
+- decouple data ingestion from github API, and target data format restitution
 - etc...
 
 #### Load Balancing and Database Race conditions
 One more thing would be about real usage of this app endpoints. If this app becomes a banger, in production we should have a scalable infrastructure to handle the love.
-We should probably deploy the containerized app in a dedicated cluster with a load balancer dispatching the traffic accross multiples instances of the app.
-As the application become more parrallel, but postgresq is not, we should take extra precautions to prevent race conditions between app instances, namely using database transactions when data is saved in repositories. A great pattern we could use is the AggregateRoot one originated from DDD, with its corresponding tactical Repository pattern.
+We should probably deploy the containerized app in a dedicated cluster with a load balancer dispatching the traffic accross multiple instances of the app.
+As the application become parallel, and PostgreSQL is not, we should take extra precautions to prevent race conditions between app instances, namely using database transactions when data is saved in repositories. A great pattern we could use is the AggregateRoot one originated from DDD, with its corresponding tactical Repository pattern.
 Used cleverly, those patterns neglect database race conditions by design.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
@@ -143,9 +144,9 @@ This runs the integration & unit tests. If you want to run them separately, use 
 ## 🚀 Future Scope <a name = "future_scope"></a>
 - implement persistence using postgre database
 - Queue and batch global process to prevent github rate limiting issues
-- include Github Auth in envirnoment to decrease Rate Limitation pressure
-- collborative flow, enforce build/test/deployment in CI/CD (github actions)
+- include Github Auth in environment to decrease Rate Limitation pressure
+- collaborative flow, enforce build/test/deployment in CI/CD (github actions)
 - enforce coding style using a linter connected to a CI/CD job
 - deploy application on a cloud service for staging purpose
 - use a dedicated dependency injection library, and apply DIP to all usecases, making the code base more uniform
-- etc.
+- remove template dead code about todos :)
