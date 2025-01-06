@@ -1,19 +1,17 @@
 import pandas as pd
 
 from api.domain.entities import Neighbour
-from api.infrastructure.external_services.github import get_repo_stargazers, get_starred_repos
-
-# TODO: remove MAX_USERS limitation in future version
-MAX_USERS = 1
+from api.domain.external_services import IGithubService
 
 # Core business logic of building starneighbour of a given repository
-def get_starneighbours(owner: str, name: str) -> list[Neighbour]:
+# We are using dependency injection pattern on github service
+def get_starneighbours(owner: str, name: str, max_users: int, github_service: IGithubService) -> list[Neighbour]:
     # get list of stargazers for a given repo
-    df_stargazers = pd.DataFrame(get_repo_stargazers(owner, name)).head(MAX_USERS)
+    df_stargazers = pd.DataFrame(github_service.get_repo_stargazers(owner, name)).head(max_users)
 
     # get list of starred repo for a given user, filtering out target repo
     def getStarred(user):
-        df_starred = pd.DataFrame(get_starred_repos(user))['full_name']
+        df_starred = pd.DataFrame(github_service.get_starred_repos(user))['full_name']
         return df_starred[df_starred != f'{owner}/{name}'].to_list()
 
     # prepare dataset for grouping
