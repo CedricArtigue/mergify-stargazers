@@ -8,7 +8,7 @@ from starlette.testclient import TestClient
 
 from api.main import app
 from api.domain.entities import Todo, TodoFilter
-from api.domain.repositories import TodoRepository
+from api.domain.repositories import ITodoRepository
 from api.infrastructure.database.client import SQL_BASE, get_engine
 from api.interface_adapters.gateways.todo import InMemoryTodoRepository, SQLTodoRepository
 

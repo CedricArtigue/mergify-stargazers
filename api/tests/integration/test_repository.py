@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from api.main import app
 from api.domain.entities import Todo, TodoFilter
-from api.domain.repositories import TodoRepository
+from api.domain.repositories import ITodoRepository
 from api.infrastructure.database.client import SQL_BASE, get_engine
 from api.interface_adapters.gateways.todo import InMemoryTodoRepository, SQLTodoRepository
 
@@ -34,7 +34,7 @@ def todo_repository():
     )
 
 @pytest.mark.integration
-def test_contract_test(fake_todo_repository: TodoRepository, todo_repository: TodoRepository):
+def test_contract_test(fake_todo_repository: ITodoRepository, todo_repository: ITodoRepository):
     """See https://martinfowler.com/bliki/ContractTest.html"""
 
     todo = Todo(key="testkey", value="testvalue")

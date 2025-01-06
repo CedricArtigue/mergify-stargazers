@@ -5,7 +5,7 @@ from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import Session, sessionmaker
 
 from api.domain.entities import Todo, TodoFilter
-from api.domain.repositories import TodoRepository
+from api.domain.repositories import ITodoRepository
 from api.infrastructure.database.client import SQL_BASE, get_engine
 
 class TodoInDB(SQL_BASE):
@@ -16,7 +16,7 @@ class TodoInDB(SQL_BASE):
     value = Column(String(length=128), nullable=False)
     done = Column(Boolean, default=False)
 
-class InMemoryTodoRepository(TodoRepository):  # In-memory implementation of interface
+class InMemoryTodoRepository(ITodoRepository):  # In-memory implementation of interface
     def __init__(self):
         self.data = {}
 
@@ -37,7 +37,7 @@ class InMemoryTodoRepository(TodoRepository):  # In-memory implementation of int
         return list(all_matching_todos)[: todo_filter.limit]
 
 
-class SQLTodoRepository(TodoRepository):  # SQL Implementation of interface
+class SQLTodoRepository(ITodoRepository):  # SQL Implementation of interface
     def __init__(self, session):
         self._session: Session = session
 
@@ -80,7 +80,7 @@ class SQLTodoRepository(TodoRepository):  # SQL Implementation of interface
 
         return [Todo(key=todo.key, value=todo.value, done=todo.done) for todo in query]
 
-def create_todo_repository() -> Iterator[TodoRepository]:
+def create_todo_repository() -> Iterator[ITodoRepository]:
     session = sessionmaker(bind=get_engine(os.getenv("DB_STRING")))()
     todo_repository = SQLTodoRepository(session)
 
