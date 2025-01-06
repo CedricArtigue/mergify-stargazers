@@ -7,15 +7,21 @@
 ## 📝 Table of Contents
 
 - [📝 Table of Contents](#-table-of-contents)
-- [🧐 Problem Statement ](#-problem-statement-)
-- [💡 Analyze ](#-analyze-)
-- [⛓️ Limitations ](#️-limitations-)
+- [🧐 Problem ](#-problem-)
+  - [⛓️ limitations](#️-limitations)
+- [💡 First Solution and Future Scope](#-first-solution-and-future-scope)
+  - [Architecture](#architecture)
+  - [Stack and Services](#stack-and-services)
+  - [Scalability](#scalability)
+    - [Data structure](#data-structure)
+    - [Rate limitation](#rate-limitation)
+    - [Load Balancing and Database Race conditions](#load-balancing-and-database-race-conditions)
 - [🏁 Getting Started ](#-getting-started-)
 - [🎈 Usage ](#-usage-)
 - [🏁 Tests ](#-tests-)
 - [🚀 Future Scope ](#-future-scope-)
 
-## 🧐 Problem Statement <a name = "problem_statement"></a>
+## 🧐 Problem <a name = "problem_statement"></a>
 
 The goal of this project is to have a web service that can receive such a request:
 ```
@@ -33,28 +39,7 @@ The returned JSON format should look like:
 ]
 ```
 
-## 💡 Analyze <a name = "idea"></a>
-
-Tools we'll be using:
-- FastAPI framework to develop the API
-- pandas library for fast data analysis and manipulation
-- docker to run the api
-- docker-compose to easily setup the required stack
-- a FastAPI template repository
-
-Github API provides endpoints to
-- fetch stargazers of a specific (owner/repo) tuple 
-- fetch starred repositories of a specific stargazer
-
-We'll setup the required API endpoint to which tied up business logic will be in charge of:
-- authenticating incoming client calls using FastAPI OAuth2PasswordBearer method
-- fetching stargazers of a specific repo
-- fetch starred repo of each previous stargazers
-- build a pandas dataframe holding those data
-- run some pandas data preparation on top of it \(filtering, grouping and formatting result)
-- send formatted data to the client
-
-## ⛓️ Limitations <a name = "limitations"></a>
+### ⛓️ limitations
 Depending on the target repository the number of stargazers can be huge. 
 
 At first look (I may be wrong), it seems that we cannot read starred repositories for a list of users in the same Github API call, which means that we must call Github API as many time as there is stargazers on the target repository (and this stands true ONLY if we have a single stargazers or starred repositories page for each endpoint, which won't hold for long)
@@ -67,11 +52,56 @@ For the sake of simplicity and dev rapidity, during the first naive approach we'
 - a single stargazers page for a target repo will be fetched
 - only a single page of starred repository will be fecthed only for a few stargazers.
 
-We'll comment later in this document how we can alleviate those limitations (db, queue, checkpoint restart, etc)
+## 💡 First Solution and Future Scope<a name = "solution"></a>
+### Architecture
+
+To improve readability, maintainability and testability, we'll be using tactical architectural patterns originated from clean architecture and solid principles
+- Layered architecture:
+  - domain layer: entities, domain errors, services/repositories interfaces
+  - usecases layer: application-specific business rules
+  - interface_adapters: in charge of implementing domain interfaces
+  - infrastructure layer: database client/migrations, external services implementation (github service)
+  - tests layer (not a real layer): api integration tests and unit tests (which directory structure mimics the app one) 
+- Dependency Inversion Principle: basically here we are injecting infra dependencies into usecases, it allows decoupled unit testing of usecases while providing an ability to modify said dependencies implementation without breaking things 
+- other patterns can be found, I'll be glad to discuss about it (Repo pattern, entities/aggregates, Domain Errors handling, single responsability, etc)
+
+### Stack and Services
+What we'll be using:
+- docker to run the api
+- docker-compose to easily setup the required stack
+- FastAPI framework to develop the API
+- FastAPI template repository (no need to reinvent the wheel for the case)
+- Swagger UI: documents API and allow user to test it 
+- FastAPI OAuth2PasswordBearer for authentication (mocked user database for now)
+- Pandas library for fast data analysis and manipulation (highly efficient data structures)
+- Github API to
+  - fetch stargazers of a specific (owner/repo) tuple 
+  - fetch starred repositories of a specific stargazer
+- a postgresql database is included in the template, I did not use it yet, maybe later
+- Pytest for unit and integration tests
+- Makefile for build and tests scripts
+
+### Scalability
+#### Data structure
+Pandas is highly memory efficient but as stated above, stargazers of repo can be a huge number and github API rate limitation can hit hard. For the sake of simplicity we are capping for now the number of API hits to demonstrate the feasability and setup the complete app. 
+
+#### Rate limitation
+In real life, we must improve quite a lot the current implemented approach. We could:
+- batch and queue stargazers' starred repo fetching and processing to prevent app to reach rate limit issue. We could have an advanced database data structure to allow asynchronous update of a specific repo starneighbours
+- use multiple authentucated github account and a flee of agent in charge of running computations in parralel, with a master process in charge of reducing the global result
+- decouple data ingestion from github API, and target data format resitution
+- etc...
+
+#### Load Balancing and Database Race conditions
+One more thing would be about real usage of this app endpoints. If this app becomes a banger, in production we should have a scalable infrastructure to handle the love.
+We should probably deploy the containerized app in a dedicated cluster with a load balancer dispatching the traffic accross multiples instances of the app.
+As the application become more parrallel, but postgresq is not, we should take extra precautions to prevent race conditions between app instances, namely using database transactions when data is saved in repositories. A great pattern we could use is the AggregateRoot one originated from DDD, with its corresponding tactical Repository pattern.
+Used cleverly, those patterns neglect database race conditions by design.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-The only requirements to develop are a running Docker engine and Make.
+The following procedure has only been tested on macOS.
+The only requirements to develop are a running Docker engine and Make (and a mac computer)
 
 To start up the project locally you first clone the project, and then run the following command in the cloned directory:
 
@@ -83,13 +113,21 @@ make up
 
 ## 🎈 Usage <a name="usage"></a>
 
-The integrated swagger gui allows to easily test the authenticated API endpoints.
+The integrated swagger gui allows to easily test the authenticated API endpoints. After running previous step, app should be running at [localhost:5000](http://localhost:5000).
 
-After running previous step, app should be running at [localhost:5000](http://localhost:5000).
-
-Authenticate with dummy user (no database for now):
+Authenticate with dummy user (no database for now), use Authorize Button on top of UI:
 - login: johndoe
 - password: secret 
+
+Verify that you are logged in, with route
+```
+GET /users/me
+```
+
+Finally you can test the target endpoint, providing user/name repo paramaters
+```
+GET /repos/<user>/<repo>/starneighbours
+```
 
 
 ## 🏁 Tests <a name = "tests"></a>
@@ -103,5 +141,11 @@ make test
 This runs the integration & unit tests. If you want to run them separately, use make itest to run the integration tests and make utest to run the unit tests.
 
 ## 🚀 Future Scope <a name = "future_scope"></a>
-
-TODO
+- implement persistence using postgre database
+- Queue and batch global process to prevent github rate limiting issues
+- include Github Auth in envirnoment to decrease Rate Limitation pressure
+- collborative flow, enforce build/test/deployment in CI/CD (github actions)
+- enforce coding style using a linter connected to a CI/CD job
+- deploy application on a cloud service for staging purpose
+- use a dedicated dependency injection library, and apply DIP to all usecases, making the code base more uniform
+- etc.
