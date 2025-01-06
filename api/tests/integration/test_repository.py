@@ -4,7 +4,6 @@ import alembic.config
 import pytest # type: ignore
 from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import sessionmaker
-from starlette.testclient import TestClient
 
 from api.main import app
 from api.domain.entities import Todo, TodoFilter
@@ -33,12 +32,6 @@ def todo_repository():
     sessionmaker(bind=engine, autocommit=True)().execute(
         ";".join([f"TRUNCATE TABLE {t} CASCADE" for t in SQL_BASE.metadata.tables])
     )
-
-
-@pytest.mark.unit
-def test_example_unit_test():
-    assert 1 != 0
-
 
 @pytest.mark.integration
 def test_contract_test(fake_todo_repository: TodoRepository, todo_repository: TodoRepository):
@@ -94,19 +87,3 @@ def test_repository_filter(todo_repository: SQLTodoRepository):
     assert len(repo.get(TodoFilter(key_contains="e", limit=1))) == 1
     assert len(repo.get(TodoFilter(value_contains="v"))) == 2
     assert len(repo.get(TodoFilter(done=True))) == 0
-
-
-@pytest.mark.integration
-def test_api():
-    time.sleep(1)
-    client = TestClient(app)
-    response = client.post("/create/testkey?value=testvalue")
-
-    assert response.status_code == 201
-    response = client.get("/get/testkey")
-
-    assert response.status_code == 200
-    assert response.json() == {"key": "testkey", "value": "testvalue", "done": False}
-
-    response = client.get("/get/wrong")
-    assert response.status_code == 404

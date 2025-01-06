@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from api.domain.entities import Todo, TodoFilter
 from api.domain.repositories import TodoRepository
-from api.infrastructure.database.client import get_engine
+from api.infrastructure.database.client import SQL_BASE, get_engine
 
-class TodoInDB(SQL_BASE):  # type: ignore
+class TodoInDB(SQL_BASE):
     __tablename__ = "todo"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
