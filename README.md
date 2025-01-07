@@ -50,7 +50,7 @@ On the other hand, Github REST API is rate limited as follow:
 - 5000 api hits per hour for authenticated users
 
 We could also use Github Graphql API to limit the number of calls drastically, but we also face rate limits in terms of fetched Nodes:
-- 5000 api hits per hour for authenticated users
+- 5000 nodes per hour for authenticated users
 
 Either if we use Github REST API or GraphQL API, we'll hit rate limit for famous repositories.
 
