@@ -5,7 +5,6 @@ import pytest # type: ignore
 from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from api.main import app
 from api.domain.entities import Repo, RepoFilter
 from api.domain.repositories import IRepoRepository
 from api.infrastructure.database.client import SQL_BASE, get_engine
