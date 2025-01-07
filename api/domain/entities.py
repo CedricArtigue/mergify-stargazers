@@ -13,12 +13,12 @@ class Neighbour(BaseModel):
     repo: str
     stargazers: list[str]
 
-class Todo(BaseModel):
+class Repo(BaseModel):
     key: str
     value: str
     done: bool = False
 
-class TodoFilter(BaseModel):
+class RepoFilter(BaseModel):
     limit: int | None = None
     key_contains: str | None = None
     value_contains: str | None = None

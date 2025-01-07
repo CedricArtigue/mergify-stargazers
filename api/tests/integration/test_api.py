@@ -1,16 +1,8 @@
-import os
 import time
-import alembic.config
 import pytest # type: ignore
-from sqlalchemy.exc import DataError, IntegrityError
-from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
 from api.main import app
-from api.domain.entities import Todo, TodoFilter
-from api.domain.repositories import ITodoRepository
-from api.infrastructure.database.client import SQL_BASE, get_engine
-from api.interface_adapters.gateways.todo import InMemoryTodoRepository, SQLTodoRepository
 
 @pytest.fixture(scope="module")
 def client():

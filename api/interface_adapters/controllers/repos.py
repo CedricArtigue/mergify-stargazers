@@ -13,7 +13,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# TODO: remove MAX_USERS limitation in future version
+# remove MAX_USERS limitation in future version
 MAX_USERS = 1
 
 @router.get("/{user}/{repo}/starneighbours", response_model=list[Neighbour] | None)

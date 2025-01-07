@@ -154,4 +154,3 @@ This runs the integration & unit tests. If you want to run them separately, use 
 - enforce coding style using a linter connected to a CI/CD job
 - deploy application on a cloud service for staging purpose
 - use a dedicated dependency injection library, and apply DIP to all usecases, making the code base more uniform
-- remove template dead code about todos :)

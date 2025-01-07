@@ -20,7 +20,7 @@ utest: cleantest ## Run unit tests
 	$(ci-compose) run --rm unit pytest -m unit .
 
 itest: cleantest ## Run integration tests
-	$(ci-compose) run --rm integration pytest -m integration .
+	$(ci-compose) run --rm integration pytest -sm integration .
 
 check: cleantest ## Check the code base
 	$(ci-compose) run --rm unit pre-commit run -a
