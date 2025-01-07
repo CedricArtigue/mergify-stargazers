@@ -43,13 +43,18 @@ The returned JSON format should look like:
 ### limitations
 Depending on the target repository the number of stargazers can be huge. 
 
-At first look (I may be wrong), it seems that we cannot read starred repositories for a list of users in the same Github API call, which means that we must call Github API as many time as there is stargazers on the target repository (and this stands true ONLY if we have a single stargazers or starred repositories page for each endpoint, which won't hold for long)
+At first look (I may be wrong), it seems that we cannot read starred repositories for a list of users in the same Github REST API call, which means that we must call Github API as many time as there is stargazers on the target repository (and this stands true ONLY if we have a single stargazers or starred repositories page for each endpoint, which won't hold for long)
 
-On the other hand, Github API is rate limited as follow:
+On the other hand, Github REST API is rate limited as follow:
 - 60 api hits per hour for non authenticated users
 - 5000 api hits per hour for authenticated users
 
-For the sake of simplicity and dev rapidity, during the first naive approach we'll limit ourselves to a maximum of less than 60 api calls for building the required result, which translates to:
+We could also use Github Graphql API to limit the number of calls drastically, but we also face rate limits in terms of fetched Nodes:
+- 5000 api hits per hour for authenticated users
+
+Either if we use Github REST API or GraphQL API, we'll hit rate limit for famous repositories.
+
+For the sake of simplicity and dev rapidity, during the first naive approach we'll be using REST API and we'll limit ourselves to a maximum of less than 60 api calls for building the required result, which translates to:
 - a single stargazers page for a target repo will be fetched
 - only a single page of starred repository will be fetched only for a few stargazers.
 
@@ -125,7 +130,7 @@ Verify that you are logged in, with route
 GET /users/me
 ```
 
-Finally you can test the target endpoint, providing user/name repo paramaters
+Finally you can test the target endpoint, providing user/repo parameters
 ```
 GET /repos/<user>/<repo>/starneighbours
 ```
