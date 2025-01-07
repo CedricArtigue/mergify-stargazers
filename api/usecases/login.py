@@ -1,13 +1,12 @@
 from api.domain.errors import InvalidUserNameOrPassword
-from api.interface_adapters.gateways.user import UserInDB, fake_users_db
+from api.interface_adapters.gateways.user import UserInDB
+from api.interface_adapters.shared.auth import fake_users_db, fake_hash_password
 
 class AuthToken:
     access_token: str
     token_type: str
 
-def fake_hash_password(password: str):
-    return "fakehashed" + password
-
+# TODO: inject user repository here 
 def login(username: str, password: str) -> AuthToken:
     user_dict = fake_users_db.get(username)
     if not user_dict:
