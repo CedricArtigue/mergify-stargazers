@@ -16,7 +16,8 @@ class UserInDB(SQL_BASE):
     hashed_password = Column(String(length=128), nullable=False)
     disabled = Column(Boolean, default=False)
 
-class InMemoryUserRepository(IUserRepository):  # In-memory implementation of interface
+# In-memory implementation of interface
+class InMemoryUserRepository(IUserRepository):
     def __init__(self):
         self.data = {}
 
@@ -26,7 +27,12 @@ class InMemoryUserRepository(IUserRepository):  # In-memory implementation of in
     def get_by_username(self, username: str) -> User | None:
         return self.data.get(username)
 
-class SQLUserRepository(IUserRepository):  # SQL Implementation of interface
+    # This provides no security, here token is set to be the username directly
+    def get_by_token(self, token: str) -> User | None:
+        return self.data.get(token)
+
+# SQL Implementation of interface
+class SQLUserRepository(IUserRepository):
     def __init__(self, session):
         self._session: Session = session
 
@@ -48,9 +54,18 @@ class SQLUserRepository(IUserRepository):  # SQL Implementation of interface
         instance = self._session.query(UserInDB).filter(UserInDB.username == username).first()
 
         if instance:
-            return User(username=instance.username, disabled=instance.disabled)
+            return User(username=instance.username, hashed_password=instance.hashed_password, disabled=instance.disabled)
 
         return None
+    
+    # This provides no security, here token is set to be the username directly
+    def get_by_token(self, token: str) -> User | None:
+        instance = self._session.query(UserInDB).filter(UserInDB.username == token).first()
+
+        if instance:
+            return User(username=instance.username, hashed_password=instance.hashed_password, disabled=instance.disabled)
+
+        return None    
 
 def create_user_repository() -> Iterator[IUserRepository]:
     session = sessionmaker(bind=get_engine(os.getenv("DB_STRING")))()

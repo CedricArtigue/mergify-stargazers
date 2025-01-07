@@ -29,3 +29,6 @@ class IUserRepository:
 
     def get_by_username(self, username: str) -> User | None:
         raise NotImplementedError()
+    
+    def get_by_token(self, token: str) -> User | None:
+        raise NotImplementedError()
