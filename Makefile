@@ -7,9 +7,13 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 
 targets: help
 
-up: ## Run the application
+up:
 	docker compose up -d --build api
 
+# down command also remove postgresql volume 
+down:
+	docker compose down
+	docker volume rm mergify-stargazers_postgres-data
 
 done: check test ## Prepare for a commit
 test: utest itest  ## Run unit and integration tests
