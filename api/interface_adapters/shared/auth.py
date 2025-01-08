@@ -1,11 +1,10 @@
-import os
 from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
 
 from api.domain.entities import User
 from api.domain.repositories import IUserRepository
-from api.interface_adapters.gateways.user import UserInDB, create_user_repository
-from fastapi.security import OAuth2PasswordBearer
+from api.interface_adapters.gateways.user import create_user_repository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -17,7 +16,6 @@ async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     user_repository: IUserRepository = Depends(create_user_repository)
 ):
-    # This provide no security, we should retrieve user via a real token, not the username
     user = user_repository.get_by_token(token)
     if not user:
         raise HTTPException(
