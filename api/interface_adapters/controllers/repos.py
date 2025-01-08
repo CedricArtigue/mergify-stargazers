@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from api.domain.entities import Neighbour
 from api.infrastructure.external_services.github import GithubService
-from api.interface_adapters.gateways.user import get_current_active_user
+from api.interface_adapters.shared.auth import get_current_active_user
 from api.usecases.get_starneighbours import get_starneighbours as get_starneighbours_usecase
 from api.domain.errors import GithubRepositoryNotFound, GithubRateLimitExceeded
 
@@ -13,7 +13,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# TODO: remove MAX_USERS limitation in future version
+# remove MAX_USERS limitation in future version
 MAX_USERS = 1
 
 @router.get("/{user}/{repo}/starneighbours", response_model=list[Neighbour] | None)

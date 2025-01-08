@@ -1,18 +1,15 @@
 from api.domain.errors import InvalidUserNameOrPassword
-from api.interface_adapters.gateways.user import UserInDB, fake_users_db
+from api.domain.repositories import IUserRepository
+from api.interface_adapters.shared.auth import fake_hash_password
 
 class AuthToken:
     access_token: str
     token_type: str
 
-def fake_hash_password(password: str):
-    return "fakehashed" + password
-
-def login(username: str, password: str) -> AuthToken:
-    user_dict = fake_users_db.get(username)
-    if not user_dict:
-        raise InvalidUserNameOrPassword    
-    user = UserInDB(**user_dict)
+def login(username: str, password: str, user_repository: IUserRepository) -> AuthToken:
+    user = user_repository.get_by_username(username)
+    if not user:
+        raise InvalidUserNameOrPassword
     hashed_password = fake_hash_password(password)
     if not hashed_password == user.hashed_password:
         raise InvalidUserNameOrPassword

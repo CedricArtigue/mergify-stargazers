@@ -5,21 +5,9 @@ from pydantic import BaseModel
 
 class User(BaseModel):
     username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
+    hashed_password: str
+    disabled: bool = False
 
 class Neighbour(BaseModel):
     repo: str
     stargazers: list[str]
-
-class Todo(BaseModel):
-    key: str
-    value: str
-    done: bool = False
-
-class TodoFilter(BaseModel):
-    limit: int | None = None
-    key_contains: str | None = None
-    value_contains: str | None = None
-    done: bool | None = None
