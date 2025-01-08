@@ -78,12 +78,11 @@ What we'll be using:
 - FastAPI framework to develop the API
 - FastAPI template repository (no need to reinvent the wheel for the case)
 - Swagger UI: documents API and allow user to test it 
-- FastAPI OAuth2PasswordBearer for authentication (mocked user database for now)
+- FastAPI OAuth2PasswordBearer for authentication
 - Pandas library for fast data analysis and manipulation (highly efficient data structures)
 - Github API to
   - fetch stargazers of a specific (owner/repo) tuple 
   - fetch starred repositories of a specific stargazer
-- a postgresql database is included in the template, I did not use it yet, maybe later
 - Pytest for unit and integration tests
 - Makefile for build and tests scripts
 
@@ -109,7 +108,7 @@ Used cleverly, those patterns neglect database race conditions by design.
 The following procedure has only been tested on macOS.
 The only requirements to develop are a running Docker engine and Make (and a mac computer)
 
-To start up the project locally you first clone the project, and then run the following command in the cloned directory:
+To start up the project locally you must clone the project and run the up command in the cloned directory:
 
 ```shell
 git clone https://github.com/CedricArtigue/mergify-stargazers.git
@@ -117,11 +116,21 @@ cd mergify-stargazers
 make up
 ```
 
+Once the local environment is running, it is time to apply migrations to the database (A test user is also being seeded)
+```shell
+make migrate
+```
+
+To stop the local environment and remove database docker volume:
+```shell
+make down
+```
+
 ## 🎈 Usage <a name="usage"></a>
 
 The integrated swagger gui allows to easily test the authenticated API endpoints. After running previous step, app should be running at [localhost:5000](http://localhost:5000).
 
-Authenticate with dummy user (no database for now), use Authorize Button on top of UI:
+Authenticate with seeded user, use Authorize Button on top of UI:
 - login: johndoe
 - password: secret 
 
@@ -147,7 +156,6 @@ make test
 This runs the integration & unit tests. If you want to run them separately, use make itest to run the integration tests and make utest to run the unit tests.
 
 ## 🚀 Future Scope <a name = "future_scope"></a>
-- implement persistence using postgre database
 - Queue and batch global process to prevent github rate limiting issues
 - include Github Auth in environment to decrease Rate Limitation pressure
 - collaborative flow, enforce build/test/deployment in CI/CD (github actions)
